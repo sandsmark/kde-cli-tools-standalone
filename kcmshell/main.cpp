@@ -38,7 +38,6 @@
 #include <KLocalizedString>
 #include <KServiceTypeTrader>
 #include <KStartupInfo>
-#include <KActivities/ResourceInstance>
 
 #include <QIcon>
 #include <QCommandLineParser>
@@ -124,16 +123,6 @@ KCMShellMultiDialog::KCMShellMultiDialog(KPageDialog::FaceType dialogFace, QWidg
     setModal(false);
 
     QDBusConnection::sessionBus().registerObject(QStringLiteral("/KCModule/dialog"), this, QDBusConnection::ExportScriptableSlots);
-
-    connect(this, &KCMShellMultiDialog::currentPageChanged,
-            this, [this](KPageWidgetItem *newPage,KPageWidgetItem *oldPage) {
-                Q_UNUSED(oldPage);
-                KCModuleProxy *activeModule = newPage->widget()->findChild<KCModuleProxy *>();
-                if (activeModule) {
-                    KActivities::ResourceInstance::notifyAccessed(QUrl(QStringLiteral("kcm:") + activeModule->moduleInfo().service()->storageId()),
-                            QStringLiteral("org.kde.systemsettings"));
-                }
-            });
 }
 
 void KCMShellMultiDialog::activate(const QByteArray& asn_id)
